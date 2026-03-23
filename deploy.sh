@@ -65,7 +65,7 @@ fi
 echo "▶️ 启动新的 jjlove-api 服务..."
 # 切换到 server 目录，确保相对路径（如 './db/database.js'）正确解析
 cd "$SERVER_DIR" || exit
-pm2 start index.js --name "jjlove-api" --watch
+pm2 start index.js --name "jjlove-api"
 
 # 保存 PM2 进程列表，设置开机自启
 pm2 save
