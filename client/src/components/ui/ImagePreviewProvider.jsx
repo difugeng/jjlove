@@ -11,7 +11,12 @@ export const ImagePreviewProvider = ({ children }) => {
   const [previewData, setPreviewData] = useState(null); // { image: string, title: string }
 
   const showPreview = (image, title = '') => {
-    setPreviewData({ image, title });
+    // 处理相对路径的图片，与 ProductImage 组件保持一致
+    let processedImage = image;
+    if (typeof image === 'string' && image.startsWith('uploads/')) {
+      processedImage = `/jjlove/${image}`;
+    }
+    setPreviewData({ image: processedImage, title });
   };
 
   const closePreview = () => {
@@ -19,11 +24,12 @@ export const ImagePreviewProvider = ({ children }) => {
   };
 
   // 检查是否是Emoji
-  // 如果是空值、undefined，或者是单纯的文本（非 http 且非 data:），我们都当成 Emoji/文本处理
+  // 如果是空值、undefined，或者是单纯的文本（非 http 且非 data: 且非 / 开头），我们都当成 Emoji/文本处理
   const isEmoji = !previewData?.image || 
                   (typeof previewData.image === 'string' && 
                    !previewData.image.startsWith('http') && 
-                   !previewData.image.startsWith('data:'));
+                   !previewData.image.startsWith('data:') &&
+                   !previewData.image.startsWith('/'));
 
   return (
     <ImagePreviewContext.Provider value={{ showPreview, closePreview }}>
