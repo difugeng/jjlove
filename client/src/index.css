@@ -1,0 +1,28 @@
+@import url('https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: 'ZCOOL KuaiLe', 'Comic Sans MS', cursive, sans-serif;
+  background-color: #FEF3C7; /* Style C background */
+  color: #333;
+}
+
+@layer components {
+  /* Style C - Creamy Piggy Card */
+  .piggy-card {
+    @apply bg-white border-3 border-pink-200 rounded-[1.5rem] shadow-piggy transition-all duration-200;
+  }
+  
+  /* Style C - Primary Button (Pink) */
+  .piggy-btn-primary {
+    @apply bg-piggy-pink text-white border-2 border-piggy-pink-dark shadow-piggy-btn transition-all duration-100 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none;
+  }
+  
+  /* Style C - Secondary Button (White) */
+  .piggy-btn-secondary {
+    @apply bg-white text-piggy-pink border-2 border-pink-200 shadow-piggy-sm transition-all duration-100 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none;
+  }
+}
