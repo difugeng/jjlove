@@ -18,6 +18,7 @@ dist-ssr
 # Editor directories and files
 .vercel/*
 .vscode/*
+.claude/*
 !.vscode/extensions.json
 .idea
 .DS_Store

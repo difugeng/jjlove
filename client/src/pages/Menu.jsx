@@ -10,7 +10,7 @@ import ProductImage from '../components/ui/ProductImage';
 
 const Menu = () => {
   const { user, logout } = useAuth();
-  const { cart, addToCart, removeFromCart, addBackupToItem, removeBackupFromItem, totalItems, totalPrice, clearCart } = useCart();
+  const { cart, addToCart, removeFromCart, addBackupToItem, removeBackupFromItem, totalItems, totalPrice, clearCart, updateCartItemQuantity, removeCartItemCompletely, updateBackupQuantity } = useCart();
   const { showModal } = useModal();
   const { showPreview } = useImagePreview();
   const navigate = useNavigate();
@@ -488,20 +488,114 @@ const Menu = () => {
             <div className="p-4 overflow-y-auto flex-1 space-y-4">
               {cart.map(item => (
                 <div key={item.id} className="bg-white border-2 border-pink-100 rounded-xl p-3 shadow-sm">
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center space-x-3">
-                      <span 
+                  <div className="flex justify-between items-start">
+                    <div className="flex items-center space-x-3 flex-1">
+                      <span
                         className="text-2xl cursor-pointer hover:scale-110 transition-transform w-8 h-8 flex items-center justify-center bg-pink-50 rounded-lg overflow-hidden"
                         onClick={() => showPreview(item.image, item.name)}
                       >
                         <ProductImage src={item.image} alt={item.name} className="w-full h-full object-cover" />
                       </span>
-                      <div>
-                        <p className="font-bold text-gray-800">{item.name}</p>
-                        <p className="text-xs text-pink-400">¥ {item.price} x {item.quantity}</p>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-bold text-gray-800 truncate">{item.name}</p>
+                        {(item.category_name || item.sub_category) && (
+                          <p className="text-[10px] text-gray-400 mt-0.5 bg-gray-50 inline-block px-1.5 py-0.5 rounded border border-gray-100 truncate max-w-full">
+                            {item.category_name || ''}{item.category_name && item.sub_category && item.sub_category !== '全部' ? ' - ' : ''}{item.sub_category && item.sub_category !== '全部' ? item.sub_category : ''}
+                          </p>
+                        )}
+                        {item.remark && (
+                          <p className="text-[10px] text-gray-500 mt-0.5 bg-yellow-50 inline-block px-1.5 py-0.5 rounded border border-yellow-100 truncate max-w-full">
+                            📝 {item.remark}
+                          </p>
+                        )}
+                        <p className="text-xs text-pink-400 mt-1">¥ {item.price}</p>
                       </div>
                     </div>
-                    <button 
+                    <div className="flex items-center space-x-2">
+                      {/* 数量控制 */}
+                      <div className="flex items-center space-x-1">
+                        <button
+                          onClick={() => updateCartItemQuantity(item.id, item.quantity - 1)}
+                          className="w-6 h-6 rounded-full bg-white border-2 border-pink-200 text-pink-400 flex items-center justify-center hover:bg-pink-50 active:scale-95 transition"
+                        >
+                          <Minus size={12} />
+                        </button>
+                        <span className="text-piggy-pink-dark font-bold w-5 text-center text-sm">{item.quantity}</span>
+                        <button
+                          onClick={() => updateCartItemQuantity(item.id, item.quantity + 1)}
+                          className="w-6 h-6 rounded-full bg-piggy-pink text-white border-2 border-piggy-pink-dark flex items-center justify-center shadow-sm active:scale-95 transition"
+                        >
+                          <Plus size={12} />
+                        </button>
+                      </div>
+                      {/* 删除按钮 */}
+                      <button
+                        onClick={() => removeCartItemCompletely(item.id)}
+                        className="w-6 h-6 rounded-full bg-red-50 text-red-400 flex items-center justify-center hover:bg-red-100 active:scale-95 transition ml-1"
+                      >
+                        <X size={14} />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Backups List */}
+                  {item.backups && item.backups.length > 0 && (
+                    <div className="mt-2 pl-2 space-y-2">
+                      {item.backups.map(backup => (
+                        <div key={backup.id} className="flex items-center justify-between bg-gray-50 p-2 rounded-lg border border-gray-100">
+                          <div className="flex items-center space-x-2 flex-1 min-w-0">
+                            <CornerDownRight size={14} className="text-gray-400 shrink-0" />
+                            <span
+                              className="text-lg cursor-pointer hover:scale-110 transition-transform w-6 h-6 flex items-center justify-center bg-gray-100 rounded-md overflow-hidden shrink-0"
+                              onClick={() => showPreview(backup.image, backup.name)}
+                            >
+                              <ProductImage src={backup.image} alt={backup.name} className="w-full h-full object-cover" />
+                            </span>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-bold text-gray-600 truncate">{backup.name}</p>
+                              {(backup.category_name || backup.sub_category) && (
+                                <p className="text-[9px] text-gray-400 mt-0.5 bg-gray-100 inline-block px-1 py-0.5 rounded border border-gray-100 truncate max-w-full">
+                                  {backup.category_name || ''}{backup.category_name && backup.sub_category && backup.sub_category !== '全部' ? ' - ' : ''}{backup.sub_category && backup.sub_category !== '全部' ? backup.sub_category : ''}
+                                </p>
+                              )}
+                              {backup.remark && (
+                                <p className="text-[9px] text-gray-400 bg-white inline-block px-1 py-0.5 rounded border border-gray-100 truncate max-w-full">
+                                  📝 {backup.remark}
+                                </p>
+                              )}
+                              <p className="text-[10px] text-purple-400 mt-0.5">¥ {backup.price}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center space-x-1">
+                            {/* 备选商品数量控制 */}
+                            <button
+                              onClick={() => updateBackupQuantity(item.id, backup.id, backup.quantity - 1)}
+                              className="w-5 h-5 rounded-full bg-white border border-gray-300 text-gray-500 flex items-center justify-center hover:bg-gray-100 active:scale-95 transition"
+                            >
+                              <Minus size={10} />
+                            </button>
+                            <span className="text-gray-600 font-bold w-4 text-center text-xs">{backup.quantity}</span>
+                            <button
+                              onClick={() => updateBackupQuantity(item.id, backup.id, backup.quantity + 1)}
+                              className="w-5 h-5 rounded-full bg-purple-400 text-white flex items-center justify-center shadow-sm active:scale-95 transition"
+                            >
+                              <Plus size={10} />
+                            </button>
+                            <button
+                              onClick={() => removeBackupFromItem(item.id, backup.id)}
+                              className="w-5 h-5 rounded-full bg-red-50 text-red-400 flex items-center justify-center hover:bg-red-100 active:scale-95 transition ml-1"
+                            >
+                              <X size={12} />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* 添加备选按钮 */}
+                  <div className="mt-2 flex justify-end">
+                    <button
                       onClick={() => {
                         setShowCheckout(false);
                         setSelectingBackupFor(item);
@@ -511,29 +605,6 @@ const Menu = () => {
                       + 备选
                     </button>
                   </div>
-                  
-                  {/* Backups List */}
-                  {item.backups && item.backups.length > 0 && (
-                    <div className="mt-2 pl-2 space-y-2">
-                      {item.backups.map(backup => (
-                        <div key={backup.id} className="flex items-center justify-between bg-gray-50 p-2 rounded-lg border border-gray-100">
-                          <div className="flex items-center space-x-2">
-                            <CornerDownRight size={14} className="text-gray-400" />
-                            <span 
-                              className="text-lg cursor-pointer hover:scale-110 transition-transform w-6 h-6 flex items-center justify-center bg-gray-100 rounded-md overflow-hidden"
-                              onClick={() => showPreview(backup.image, backup.name)}
-                            >
-                              <ProductImage src={backup.image} alt={backup.name} className="w-full h-full object-cover" />
-                            </span>
-                            <p className="text-sm font-bold text-gray-600 line-through decoration-gray-400">{backup.name}</p>
-                          </div>
-                          <button onClick={() => removeBackupFromItem(item.id, backup.id)} className="text-red-400">
-                            <X size={14} />
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
                 </div>
               ))}
               
@@ -553,7 +624,7 @@ const Menu = () => {
                  <span className="font-bold text-gray-500">预计花费</span>
                  <span className="text-2xl font-black text-piggy-pink-dark">¥ {totalPrice}</span>
                </div>
-               <button 
+               <button
                  onClick={submitOrder}
                  className="w-full bg-piggy-pink text-white py-4 rounded-xl font-black text-lg border-b-4 border-piggy-pink-dark active:border-b-0 active:translate-y-1 transition shadow-piggy-btn"
                >

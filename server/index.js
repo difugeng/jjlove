@@ -116,7 +116,7 @@ app.post(`${API_PREFIX}/orders`, (req, res) => {
             }
             
             const orderId = this.lastID;
-            const itemStmt = db.prepare("INSERT INTO order_items (order_id, product_id, quantity, is_backup, parent_item_id, snapshot_name, snapshot_price, snapshot_image, snapshot_category, snapshot_sub_category) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            const itemStmt = db.prepare("INSERT INTO order_items (order_id, product_id, quantity, is_backup, parent_item_id, snapshot_name, snapshot_price, snapshot_image, snapshot_category, snapshot_sub_category, snapshot_remark) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
             
             // 异步插入可能导致问题，但在 serialize 中 run 是顺序的，不过为了拿到主商品的 ID 赋给备选商品，需要特殊处理
             // 这里我们采用 Promise 封装来处理层级关系
@@ -126,7 +126,7 @@ app.post(`${API_PREFIX}/orders`, (req, res) => {
                     for (const item of items) {
                         // 插入主商品
                         const mainItemId = await new Promise((resolve, reject) => {
-                            itemStmt.run(orderId, item.id, item.quantity, 0, null, item.name, item.price, item.image, item.category_name, item.sub_category, function(err) {
+                            itemStmt.run(orderId, item.id, item.quantity, 0, null, item.name, item.price, item.image, item.category_name, item.sub_category, item.remark || '', function(err) {
                                 if (err) reject(err);
                                 else resolve(this.lastID);
                             });
@@ -136,7 +136,7 @@ app.post(`${API_PREFIX}/orders`, (req, res) => {
                         if (item.backups && item.backups.length > 0) {
                             for (const backup of item.backups) {
                                 await new Promise((resolve, reject) => {
-                                    itemStmt.run(orderId, backup.id, backup.quantity || 1, 1, mainItemId, backup.name, backup.price, backup.image, backup.category_name, backup.sub_category, function(err) {
+                                    itemStmt.run(orderId, backup.id, backup.quantity || 1, 1, mainItemId, backup.name, backup.price, backup.image, backup.category_name, backup.sub_category, backup.remark || '', function(err) {
                                         if (err) reject(err);
                                         else resolve(this.lastID);
                                     });
@@ -167,8 +167,9 @@ app.get(`${API_PREFIX}/orders/pending`, (req, res) => {
     const sql = `
         SELECT o.id as order_id, o.total_price, o.note, o.status, o.created_at, u.name as user_name,
                oi.id as item_id, oi.quantity, oi.purchased, oi.is_backup, oi.parent_item_id, oi.product_id,
-               oi.snapshot_name as product_name, oi.snapshot_price as price, oi.snapshot_image as image, 
-               oi.snapshot_category as category_name, oi.snapshot_sub_category as sub_category
+               oi.snapshot_name as product_name, oi.snapshot_price as price, oi.snapshot_image as image,
+               oi.snapshot_category as category_name, oi.snapshot_sub_category as sub_category,
+               oi.snapshot_remark as remark
         FROM orders o
         JOIN users u ON o.user_id = u.id
         JOIN order_items oi ON o.id = oi.order_id
@@ -202,6 +203,7 @@ app.get(`${API_PREFIX}/orders/pending`, (req, res) => {
                 image: row.image,
                 category_name: row.category_name,
                 sub_category: row.sub_category,
+                remark: row.remark,
                 quantity: row.quantity,
                 purchased: row.purchased,
                 is_backup: row.is_backup,
@@ -405,8 +407,9 @@ app.get(`${API_PREFIX}/orders/history`, (req, res) => {
                 const sql = `
                     SELECT o.id as order_id, o.total_price, o.actual_price, o.note, o.status, o.created_at, u.name as user_name,
                            oi.id as item_id, oi.quantity, oi.purchased, oi.is_backup, oi.parent_item_id, oi.product_id,
-                           oi.snapshot_name as product_name, oi.snapshot_price as price, oi.snapshot_image as image, 
-                           oi.snapshot_category as category_name, oi.snapshot_sub_category as sub_category
+                           oi.snapshot_name as product_name, oi.snapshot_price as price, oi.snapshot_image as image,
+                           oi.snapshot_category as category_name, oi.snapshot_sub_category as sub_category,
+                           oi.snapshot_remark as remark
                     FROM orders o
                     JOIN users u ON o.user_id = u.id
                     JOIN order_items oi ON o.id = oi.order_id
@@ -440,6 +443,7 @@ app.get(`${API_PREFIX}/orders/history`, (req, res) => {
                             image: row.image,
                             category_name: row.category_name,
                             sub_category: row.sub_category,
+                            remark: row.remark,
                             quantity: row.quantity,
                             purchased: row.purchased,
                             is_backup: row.is_backup,

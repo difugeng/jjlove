@@ -79,6 +79,7 @@ db.serialize(() => {
         snapshot_image TEXT, -- 商品图片快照
         snapshot_category TEXT, -- 商品分类快照
         snapshot_sub_category TEXT, -- 商品子分类快照
+        snapshot_remark TEXT, -- 商品备注快照
         FOREIGN KEY(order_id) REFERENCES orders(id),
         FOREIGN KEY(product_id) REFERENCES products(id)
     )`, () => {
@@ -90,8 +91,8 @@ db.serialize(() => {
             if (!err) {
                 // 如果成功添加了新列，说明是旧数据，需要通过关联 products 表来回填数据
                 db.run(`
-                    UPDATE order_items 
-                    SET 
+                    UPDATE order_items
+                    SET
                         snapshot_name = (SELECT name FROM products WHERE id = order_items.product_id),
                         snapshot_price = (SELECT price FROM products WHERE id = order_items.product_id),
                         snapshot_image = (SELECT image FROM products WHERE id = order_items.product_id),
@@ -99,9 +100,19 @@ db.serialize(() => {
                         snapshot_sub_category = (SELECT sub_category FROM products WHERE id = order_items.product_id)
                     WHERE snapshot_name IS NULL
                 `);
-                
+
                 // 对于商品已经被删除的订单项，给一个默认提示
                 db.run(`UPDATE order_items SET snapshot_name = '已下架商品' WHERE snapshot_name IS NULL`);
+            }
+        });
+        db.run(`ALTER TABLE order_items ADD COLUMN snapshot_remark TEXT`, (err) => {
+            if (!err) {
+                // 回填 remark 数据
+                db.run(`
+                    UPDATE order_items
+                    SET snapshot_remark = (SELECT remark FROM products WHERE id = order_items.product_id)
+                    WHERE snapshot_remark IS NULL
+                `);
             }
         });
     });

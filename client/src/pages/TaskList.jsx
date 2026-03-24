@@ -255,12 +255,17 @@ const TaskList = () => {
                         >
                           <ProductImage src={item.image} alt={item.name} />
                         </div>
-                        <div className="flex-1">
+                        <div className="flex-1 min-w-0">
                           <p className={`font-bold text-lg leading-tight ${item.purchased ? 'text-green-700' : 'text-gray-700'}`}>
                             {item.name}
                           </p>
-                          <div className="flex items-center space-x-2 mt-1">
+                          <div className="flex items-center space-x-2 mt-1 flex-wrap gap-y-1">
                             <span className="text-xs text-gray-400 bg-gray-100 px-1.5 rounded">{item.category_name} - {item.sub_category}</span>
+                            {item.remark && (
+                              <span className="text-[10px] text-gray-500 bg-yellow-50 px-1.5 py-0.5 rounded border border-yellow-100 truncate max-w-[150px]">
+                                📝 {item.remark}
+                              </span>
+                            )}
                             <span className="text-sm font-bold text-piggy-pink-dark">¥{item.price}</span>
                           </div>
                         </div>
@@ -291,11 +296,23 @@ const TaskList = () => {
                               >
                                 <ProductImage src={backup.image} alt={backup.name} />
                               </div>
-                              <div className="flex-1">
+                              <div className="flex-1 min-w-0">
                                 <p className={`font-bold text-sm leading-tight ${backup.purchased ? 'text-green-700' : 'text-purple-700'}`}>
                                   {backup.name}
                                 </p>
-                                <span className="text-xs font-bold text-purple-500">¥{backup.price}</span>
+                                <div className="flex items-center space-x-1 mt-0.5 flex-wrap gap-y-1">
+                                  {(backup.category_name || backup.sub_category) && (
+                                    <span className="text-[9px] text-gray-400 bg-gray-100 px-1 rounded">
+                                      {backup.category_name || ''}{backup.category_name && backup.sub_category && backup.sub_category !== '全部' ? ' - ' : ''}{backup.sub_category && backup.sub_category !== '全部' ? backup.sub_category : ''}
+                                    </span>
+                                  )}
+                                  {backup.remark && (
+                                    <span className="text-[9px] text-gray-500 bg-white px-1 py-0.5 rounded border border-gray-100 truncate max-w-[120px]">
+                                      📝 {backup.remark}
+                                    </span>
+                                  )}
+                                  <span className="text-xs font-bold text-purple-500">¥{backup.price}</span>
+                                </div>
                               </div>
                               <div className="font-bold text-sm bg-white text-purple-600 px-1.5 rounded border border-purple-200">
                                 x{backup.quantity}

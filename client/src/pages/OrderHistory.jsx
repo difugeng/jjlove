@@ -109,11 +109,16 @@ const OrderHistory = () => {
   };
 
   const showOrderDetails = (order) => {
+    const statusStyle = getStatusDisplay(order.status);
     const content = (
       <div className="text-left space-y-4 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
-        {/* 时间显示 */}
+        {/* 时间和状态显示 */}
         <div className="text-center pb-2 border-b border-pink-100">
           <p className="text-sm font-black text-gray-600">{new Date(order.created_at).toLocaleString()}</p>
+          <div className={`inline-flex items-center space-x-1 px-2 py-0.5 rounded-lg text-xs font-bold mt-2 ${statusStyle.bg} ${statusStyle.color}`}>
+            {statusStyle.icon}
+            <span>{statusStyle.text}</span>
+          </div>
         </div>
 
         {order.note && (
@@ -133,10 +138,15 @@ const OrderHistory = () => {
                 >
                   <ProductImage src={item.image} alt={item.name} />
                 </div>
-                <div className="flex-1">
+                <div className="flex-1 min-w-0">
                   <p className={`font-bold text-sm ${item.purchased ? 'text-green-700' : 'text-gray-500 line-through'}`}>{item.name}</p>
-                  <div className="flex items-center space-x-2 mt-0.5">
+                  <div className="flex items-center space-x-2 mt-0.5 flex-wrap gap-y-1">
                     <span className="text-[10px] text-gray-400 bg-gray-100 px-1 rounded">{item.category_name} - {item.sub_category}</span>
+                    {item.remark && (
+                      <span className="text-[9px] text-gray-500 bg-yellow-50 px-1 py-0.5 rounded border border-yellow-100 truncate max-w-[120px]">
+                        📝 {item.remark}
+                      </span>
+                    )}
                     <span className="text-xs font-bold text-piggy-pink-dark">¥{item.price}</span>
                   </div>
                 </div>
@@ -158,10 +168,15 @@ const OrderHistory = () => {
                       >
                         <ProductImage src={backup.image} alt={backup.name} />
                       </div>
-                      <div className="flex-1">
+                      <div className="flex-1 min-w-0">
                         <p className={`font-bold text-xs ${backup.purchased ? 'text-green-700' : 'text-gray-400 line-through'}`}>{backup.name}</p>
-                        <div className="flex items-center space-x-2 mt-0.5">
+                        <div className="flex items-center space-x-2 mt-0.5 flex-wrap gap-y-1">
                            <span className="text-[9px] text-gray-400 bg-gray-100 px-1 rounded">{backup.category_name} - {backup.sub_category}</span>
+                           {backup.remark && (
+                             <span className="text-[8px] text-gray-500 bg-white px-1 py-0.5 rounded border border-gray-100 truncate max-w-[100px]">
+                               📝 {backup.remark}
+                             </span>
+                           )}
                            <span className="text-[10px] font-bold text-purple-500">¥{backup.price}</span>
                         </div>
                       </div>

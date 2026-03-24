@@ -68,10 +68,12 @@ router.get('/', (req, res) => {
 
       // 获取分页数据
       const query = `
-        SELECT id, name, price, image, category_id, sub_category, remark, create_time, update_time
-        FROM products
+        SELECT p.id, p.name, p.price, p.image, p.category_id, p.sub_category, p.remark, p.create_time, p.update_time,
+               c.name as category_name
+        FROM products p
+        LEFT JOIN categories c ON p.category_id = c.id
         ${whereClause}
-        ORDER BY create_time DESC
+        ORDER BY p.create_time DESC
         LIMIT ? OFFSET ?
       `;
       
@@ -105,18 +107,24 @@ router.get('/', (req, res) => {
 router.get('/:id', (req, res) => {
   try {
     const { id } = req.params;
-    const query = 'SELECT id, name, price, image, category_id, sub_category, remark, create_time, update_time FROM products WHERE id = ?';
-    
+    const query = `
+      SELECT p.id, p.name, p.price, p.image, p.category_id, p.sub_category, p.remark, p.create_time, p.update_time,
+             c.name as category_name
+      FROM products p
+      LEFT JOIN categories c ON p.category_id = c.id
+      WHERE p.id = ?
+    `;
+
     db.get(query, [id], (err, product) => {
       if (err) {
         console.error('获取商品失败:', err);
         return res.status(500).json({ error: '获取商品失败' });
       }
-      
+
       if (!product) {
         return res.status(404).json({ error: '商品不存在' });
       }
-      
+
       res.json({
         success: true,
         data: product
