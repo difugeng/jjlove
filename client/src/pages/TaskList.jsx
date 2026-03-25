@@ -16,6 +16,7 @@ const TaskList = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showMenu, setShowMenu] = useState(false);
+  const [showRemarkTooltip, setShowRemarkTooltip] = useState(null); // 控制备注气泡显示
 
   useEffect(() => {
     fetchOrders();
@@ -261,13 +262,36 @@ const TaskList = () => {
                           </p>
                           <div className="flex items-center space-x-2 mt-1 flex-wrap gap-y-1">
                             <span className="text-xs text-gray-400 bg-gray-100 px-1.5 rounded">{item.category_name} - {item.sub_category}</span>
-                            {item.remark && (
-                              <span className="text-[10px] text-gray-500 bg-yellow-50 px-1.5 py-0.5 rounded border border-yellow-100 truncate max-w-[150px]">
-                                📝 {item.remark}
-                              </span>
-                            )}
                             <span className="text-sm font-bold text-piggy-pink-dark">¥{item.price}</span>
                           </div>
+                          {item.remark && (
+                            <div className="relative mt-1">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  e.preventDefault();
+                                  setShowRemarkTooltip(showRemarkTooltip === `main-${item.id}` ? null : `main-${item.id}`);
+                                }}
+                                className="text-[10px] text-gray-500 bg-yellow-50 px-1.5 py-0.5 rounded border border-yellow-100 text-left w-full"
+                              >
+                                📝 {item.remark.length > 15 ? item.remark.slice(0, 15) + '...' : item.remark}
+                              </button>
+                              {showRemarkTooltip === `main-${item.id}` && (
+                                <>
+                                  <div
+                                    className="fixed inset-0 z-10"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setShowRemarkTooltip(null);
+                                    }}
+                                  />
+                                  <div className="absolute left-0 top-full mt-1 z-20 bg-white rounded-lg shadow-xl border-2 border-yellow-200 p-3 min-w-[200px] max-w-[280px]">
+                                    <p className="text-sm text-gray-700">{item.remark}</p>
+                                  </div>
+                                </>
+                              )}
+                            </div>
+                          )}
                         </div>
                         <div className="font-black text-lg bg-pink-50 text-piggy-pink-dark px-2 rounded border border-pink-100">
                           x{item.quantity}
@@ -306,13 +330,36 @@ const TaskList = () => {
                                       {backup.category_name || ''}{backup.category_name && backup.sub_category && backup.sub_category !== '全部' ? ' - ' : ''}{backup.sub_category && backup.sub_category !== '全部' ? backup.sub_category : ''}
                                     </span>
                                   )}
-                                  {backup.remark && (
-                                    <span className="text-[9px] text-gray-500 bg-white px-1 py-0.5 rounded border border-gray-100 truncate max-w-[120px]">
-                                      📝 {backup.remark}
-                                    </span>
-                                  )}
                                   <span className="text-xs font-bold text-purple-500">¥{backup.price}</span>
                                 </div>
+                                {backup.remark && (
+                                  <div className="relative mt-1">
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        e.preventDefault();
+                                        setShowRemarkTooltip(showRemarkTooltip === `backup-${backup.id}` ? null : `backup-${backup.id}`);
+                                      }}
+                                      className="text-[9px] text-gray-500 bg-white px-1 py-0.5 rounded border border-gray-100 text-left w-full"
+                                    >
+                                      📝 {backup.remark.length > 12 ? backup.remark.slice(0, 12) + '...' : backup.remark}
+                                    </button>
+                                    {showRemarkTooltip === `backup-${backup.id}` && (
+                                      <>
+                                        <div
+                                          className="fixed inset-0 z-10"
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            setShowRemarkTooltip(null);
+                                          }}
+                                        />
+                                        <div className="absolute left-0 top-full mt-1 z-20 bg-white rounded-lg shadow-xl border-2 border-purple-200 p-2 min-w-[180px] max-w-[240px]">
+                                          <p className="text-xs text-gray-700">{backup.remark}</p>
+                                        </div>
+                                      </>
+                                    )}
+                                  </div>
+                                )}
                               </div>
                               <div className="font-bold text-sm bg-white text-purple-600 px-1.5 rounded border border-purple-200">
                                 x{backup.quantity}

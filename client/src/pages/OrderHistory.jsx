@@ -13,7 +13,7 @@ const OrderHistory = () => {
   const { showPreview } = useImagePreview();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  
+
   // 分页相关状态
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
@@ -142,13 +142,13 @@ const OrderHistory = () => {
                   <p className={`font-bold text-sm ${item.purchased ? 'text-green-700' : 'text-gray-500 line-through'}`}>{item.name}</p>
                   <div className="flex items-center space-x-2 mt-0.5 flex-wrap gap-y-1">
                     <span className="text-[10px] text-gray-400 bg-gray-100 px-1 rounded">{item.category_name} - {item.sub_category}</span>
-                    {item.remark && (
-                      <span className="text-[9px] text-gray-500 bg-yellow-50 px-1 py-0.5 rounded border border-yellow-100 truncate max-w-[120px]">
-                        📝 {item.remark}
-                      </span>
-                    )}
                     <span className="text-xs font-bold text-piggy-pink-dark">¥{item.price}</span>
                   </div>
+                  {item.remark && (
+                    <div className="mt-1 text-[10px] text-gray-500 bg-yellow-50 px-2 py-1 rounded border border-yellow-100">
+                      📝 {item.remark}
+                    </div>
+                  )}
                 </div>
                 <div className="font-black text-sm bg-white text-gray-600 px-1.5 rounded border border-gray-200">
                   x{item.quantity}
@@ -172,13 +172,13 @@ const OrderHistory = () => {
                         <p className={`font-bold text-xs ${backup.purchased ? 'text-green-700' : 'text-gray-400 line-through'}`}>{backup.name}</p>
                         <div className="flex items-center space-x-2 mt-0.5 flex-wrap gap-y-1">
                            <span className="text-[9px] text-gray-400 bg-gray-100 px-1 rounded">{backup.category_name} - {backup.sub_category}</span>
-                           {backup.remark && (
-                             <span className="text-[8px] text-gray-500 bg-white px-1 py-0.5 rounded border border-gray-100 truncate max-w-[100px]">
-                               📝 {backup.remark}
-                             </span>
-                           )}
                            <span className="text-[10px] font-bold text-purple-500">¥{backup.price}</span>
                         </div>
+                        {backup.remark && (
+                          <div className="mt-1 text-[9px] text-gray-500 bg-white px-2 py-1 rounded border border-gray-100">
+                            📝 {backup.remark}
+                          </div>
+                        )}
                       </div>
                       <div className="font-bold text-xs bg-white text-gray-500 px-1 rounded border border-gray-200">
                         x{backup.quantity}
