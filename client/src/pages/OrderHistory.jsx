@@ -248,19 +248,19 @@ const OrderHistory = () => {
                   <div className="bg-pink-50/50 p-3 border-b-2 border-pink-100 flex justify-between items-center">
                     <div>
                       <span className="font-bold text-gray-500 text-sm">{new Date(order.created_at).toLocaleString()}</span>
-                      {order.note && <p className="text-xs text-pink-500 mt-1">📝 "{order.note}"</p>}
+                      {order.note && <p className="text-xs text-pink-500 mt-1 max-w-[13rem]">📝 "{order.note}"</p>}
                     </div>
                     <div className="flex items-center space-x-2">
+                      <div className={`flex items-center space-x-1 px-2 py-1 rounded-lg text-xs font-bold ${statusStyle.bg} ${statusStyle.color}`}>
+                        {statusStyle.icon}
+                        <span>{statusStyle.text}</span>
+                      </div>
                       <button 
                         onClick={(e) => { e.stopPropagation(); deleteOrder(order.id); }}
                         className="text-red-300 hover:text-red-500 p-1"
                       >
                         <Trash2 size={16} />
                       </button>
-                      <div className={`flex items-center space-x-1 px-2 py-1 rounded-lg text-xs font-bold ${statusStyle.bg} ${statusStyle.color}`}>
-                        {statusStyle.icon}
-                        <span>{statusStyle.text}</span>
-                      </div>
                     </div>
                   </div>
                   

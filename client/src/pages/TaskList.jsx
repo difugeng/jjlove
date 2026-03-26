@@ -206,24 +206,20 @@ const TaskList = () => {
                     <div>
                       <div className="flex items-center space-x-2">
                         <span className="font-black text-lg text-piggy-pink-dark">Order #{order.id}</span>
-                        <span className={`text-xs font-bold px-2 py-0.5 rounded-md ${order.status === 'purchasing' ? 'bg-orange-100 text-orange-600' : 'bg-blue-100 text-blue-600'}`}>
-                          {order.status === 'purchasing' ? '投喂中 🏃' : '待投喂 ⏳'}
-                        </span>
                       </div>
                       <p className="text-xs font-bold text-pink-400">{new Date(order.created_at).toLocaleString()}</p>
                     </div>
                     <div className="text-right flex flex-col items-end">
-                      <div className="flex items-center space-x-2 mb-1">
-                        <p className="text-xs text-gray-500 font-bold">预计 ¥ {order.total_price}</p>
+                      <div className="flex items-center space-x-4 mb-1">
+                        <span className={`text-xs font-bold px-2 py-0.5 rounded-md ${order.status === 'purchasing' ? 'bg-orange-100 text-orange-600' : 'bg-blue-100 text-blue-600'}`}>
+                          {order.status === 'purchasing' ? '投喂中 🏃' : '待投喂 ⏳'}
+                        </span>
                         <button 
                           onClick={(e) => { e.stopPropagation(); deleteOrder(order.id); }}
                           className="text-red-400 hover:text-red-600 transition-colors"
                         >
                           <Trash2 size={16} />
                         </button>
-                      </div>
-                      <div className="bg-white px-2 py-1 rounded-lg border-2 border-pink-200 font-black text-piggy-pink-dark shadow-sm">
-                        已选 ¥ {currentActualPrice}
                       </div>
                     </div>
                   </div>
@@ -272,20 +268,20 @@ const TaskList = () => {
                                   e.preventDefault();
                                   setShowRemarkTooltip(showRemarkTooltip === `main-${item.id}` ? null : `main-${item.id}`);
                                 }}
-                                className="text-[10px] text-gray-500 bg-yellow-50 px-1.5 py-0.5 rounded border border-yellow-100 text-left w-full"
+                                className="text-xs text-gray-500 bg-yellow-50 px-1.5 py-0.5 rounded border border-yellow-100 text-left w-[80%]"
                               >
                                 📝 {item.remark.length > 15 ? item.remark.slice(0, 15) + '...' : item.remark}
                               </button>
                               {showRemarkTooltip === `main-${item.id}` && (
                                 <>
                                   <div
-                                    className="fixed inset-0 z-10"
+                                    className="fixed inset-0 z-30"
                                     onClick={(e) => {
                                       e.stopPropagation();
                                       setShowRemarkTooltip(null);
                                     }}
                                   />
-                                  <div className="absolute left-0 top-full mt-1 z-20 bg-white rounded-lg shadow-xl border-2 border-yellow-200 p-3 min-w-[200px] max-w-[280px]">
+                                  <div className="absolute left-0 top-full mt-1 z-40 bg-white rounded-lg shadow-xl border-2 border-yellow-200 p-3 min-w-[180px] max-w-[240px] max-h-[100px] overflow-y-auto">
                                     <p className="text-sm text-gray-700">{item.remark}</p>
                                   </div>
                                 </>
@@ -340,20 +336,20 @@ const TaskList = () => {
                                         e.preventDefault();
                                         setShowRemarkTooltip(showRemarkTooltip === `backup-${backup.id}` ? null : `backup-${backup.id}`);
                                       }}
-                                      className="text-[9px] text-gray-500 bg-white px-1 py-0.5 rounded border border-gray-100 text-left w-full"
+                                      className="text-xs text-gray-500 bg-white px-1 py-0.5 rounded border border-gray-100 text-left w-[80%]"
                                     >
                                       📝 {backup.remark.length > 12 ? backup.remark.slice(0, 12) + '...' : backup.remark}
                                     </button>
                                     {showRemarkTooltip === `backup-${backup.id}` && (
                                       <>
                                         <div
-                                          className="fixed inset-0 z-10"
+                                          className="fixed inset-0 z-30"
                                           onClick={(e) => {
                                             e.stopPropagation();
                                             setShowRemarkTooltip(null);
                                           }}
                                         />
-                                        <div className="absolute left-0 top-full mt-1 z-20 bg-white rounded-lg shadow-xl border-2 border-purple-200 p-2 min-w-[180px] max-w-[240px]">
+                                        <div className="absolute left-0 top-full mt-1 z-40 bg-white rounded-lg shadow-xl border-2 border-purple-200 p-2 min-w-[160px] max-w-[200px] max-h-[80px] overflow-y-auto">
                                           <p className="text-xs text-gray-700">{backup.remark}</p>
                                         </div>
                                       </>
@@ -373,6 +369,9 @@ const TaskList = () => {
                 </div>
 
                 <div className="p-4 bg-green-50 border-t-2 border-green-100">
+                  <div className="text-center mb-3">
+                    <p className="text-xs text-gray-500 font-bold">预计 ¥ {order.total_price}</p>
+                  </div>
                   <button 
                     onClick={() => completeOrder(order.id)}
                     className="w-full py-3 bg-green-400 text-white font-black rounded-xl border-2 border-green-600 shadow-[2px_2px_0px_#166534] active:translate-y-1 active:shadow-none transition flex items-center justify-center gap-2"
