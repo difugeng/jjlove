@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import api from '../services/api';
-import { ArrowLeft, Clock, ShoppingBag, CheckCircle2, ChevronRight, MessageSquare, CornerDownRight, Trash2 } from 'lucide-react';
+import { ArrowLeft, Clock, ShoppingBag, CheckCircle2, Circle, ChevronRight, MessageSquare, CornerDownRight, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useModal } from '../components/ui/ModalProvider';
 import ProductImage from '../components/ui/ProductImage';
@@ -124,67 +124,71 @@ const OrderHistory = () => {
         {order.note && (
           <div className="bg-pink-50 p-3 rounded-xl border border-pink-100 flex items-start space-x-2">
             <MessageSquare size={16} className="text-pink-400 mt-0.5 shrink-0" />
-            <p className="text-sm font-bold text-gray-700 italic">"{order.note}"</p>
+            <p className="text-sm font-bold text-gray-700 italic break-words" style={{ wordBreak: 'break-all', overflowWrap: 'break-word' }}>"{order.note}"</p>
           </div>
         )}
         
         <div className="space-y-3">
           {order.items.map(item => (
             <div key={item.id} className="space-y-2">
-              <div className={`flex items-center space-x-3 p-2 rounded-xl border-2 ${item.purchased ? 'bg-green-50 border-green-200' : 'bg-gray-50 border-gray-100'}`}>
-                <div 
-                  className="text-3xl cursor-pointer hover:scale-110 transition-transform w-12 h-12 flex items-center justify-center overflow-hidden"
-                  onClick={() => showPreview(item.image, item.name)}
-                >
-                  <ProductImage src={item.image} alt={item.name} />
-                </div>
-                <div className="flex-1 min-w-0">
+              <div className={`p-2 rounded-xl border-2 ${item.purchased ? 'bg-green-50 border-green-200' : 'bg-gray-50 border-gray-100'}`}>
+                <div className="flex items-start justify-between mb-2">
                   <p className={`font-bold text-sm ${item.purchased ? 'text-green-700' : 'text-gray-500 line-through'}`}>{item.name}</p>
-                  <div className="flex items-center space-x-2 mt-0.5 flex-wrap gap-y-1">
-                    <span className="text-[10px] text-gray-400 bg-gray-100 px-1 rounded">{item.category_name} - {item.sub_category}</span>
+                  <span className="text-[10px] text-gray-400 bg-gray-100 px-1 rounded">{item.category_name} - {item.sub_category}</span>
+                </div>
+                <div className="flex items-center space-x-4">
+                  {item.purchased ? <CheckCircle2 size={18} className="text-green-500 shrink-0" /> : <Circle size={18} className="text-gray-400 shrink-0" />}
+                  <div 
+                    className="text-3xl cursor-pointer hover:scale-110 transition-transform w-12 h-12 flex items-center justify-center overflow-hidden"
+                    onClick={() => showPreview(item.image, item.name)}
+                  >
+                    <ProductImage src={item.image} alt={item.name} />
+                  </div>
+                  <div className="flex-1">
                     <span className="text-xs font-bold text-piggy-pink-dark">¥{item.price}</span>
                   </div>
-                  {item.remark && (
-                    <div className="mt-1 text-[10px] text-gray-500 bg-yellow-50 px-2 py-1 rounded border border-yellow-100">
-                      📝 {item.remark}
-                    </div>
-                  )}
+                  <div className="font-black text-sm bg-white text-gray-600 px-1.5 rounded border border-gray-200">
+                    x{item.quantity}
+                  </div>
                 </div>
-                <div className="font-black text-sm bg-white text-gray-600 px-1.5 rounded border border-gray-200">
-                  x{item.quantity}
-                </div>
-                {item.purchased && <CheckCircle2 size={18} className="text-green-500 ml-1" />}
+                {item.remark && (
+                  <div className="mt-2 text-[10px] text-gray-500 bg-yellow-50 px-2 py-1 rounded border border-yellow-100" style={{ wordBreak: 'break-all' }}>
+                    📝 {item.remark}
+                  </div>
+                )}
               </div>
               
               {item.backups && item.backups.length > 0 && (
                 <div className="pl-6 space-y-2 border-l-2 border-dashed border-purple-100 ml-4 relative">
                   <div className="absolute -left-3 top-2 text-[10px] font-bold text-purple-300 bg-white px-0.5">备选</div>
                   {item.backups.map(backup => (
-                    <div key={backup.id} className={`flex items-center space-x-2 p-1.5 rounded-lg border ${backup.purchased ? 'bg-green-50 border-green-200' : 'bg-gray-50 border-gray-100'}`}>
+                    <div key={backup.id} className={`p-1.5 rounded-lg border ${backup.purchased ? 'bg-green-50 border-green-200' : 'bg-gray-50 border-gray-100'}`}>
+                    <div className="flex items-start justify-between mb-2">
+                      <p className={`font-bold text-xs ${backup.purchased ? 'text-green-700' : 'text-gray-400 line-through'}`}>{backup.name}</p>
+                      <span className="text-[9px] text-gray-400 bg-gray-100 px-1 rounded">{backup.category_name} - {backup.sub_category}</span>
+                    </div>
+                    <div className="flex items-center space-x-3">
                       <CornerDownRight size={14} className="text-gray-300 shrink-0" />
+                      {backup.purchased ? <CheckCircle2 size={14} className="text-green-500 shrink-0" /> : <Circle size={14} className="text-gray-400 shrink-0" />}
                       <div 
                         className="text-2xl cursor-pointer hover:scale-110 transition-transform w-8 h-8 flex items-center justify-center overflow-hidden"
                         onClick={() => showPreview(backup.image, backup.name)}
                       >
                         <ProductImage src={backup.image} alt={backup.name} />
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className={`font-bold text-xs ${backup.purchased ? 'text-green-700' : 'text-gray-400 line-through'}`}>{backup.name}</p>
-                        <div className="flex items-center space-x-2 mt-0.5 flex-wrap gap-y-1">
-                           <span className="text-[9px] text-gray-400 bg-gray-100 px-1 rounded">{backup.category_name} - {backup.sub_category}</span>
-                           <span className="text-[10px] font-bold text-purple-500">¥{backup.price}</span>
-                        </div>
-                        {backup.remark && (
-                          <div className="mt-1 text-[9px] text-gray-500 bg-white px-2 py-1 rounded border border-gray-100">
-                            📝 {backup.remark}
-                          </div>
-                        )}
+                      <div className="flex-1">
+                        <span className="text-[10px] font-bold text-purple-500">¥{backup.price}</span>
                       </div>
                       <div className="font-bold text-xs bg-white text-gray-500 px-1 rounded border border-gray-200">
                         x{backup.quantity}
                       </div>
-                      {backup.purchased && <CheckCircle2 size={14} className="text-green-500 ml-1" />}
                     </div>
+                    {backup.remark && (
+                      <div className="mt-2 text-[9px] text-gray-500 bg-white px-2 py-1 rounded border border-gray-100" style={{ wordBreak: 'break-all' }}>
+                        📝 {backup.remark}
+                      </div>
+                    )}
+                  </div>
                   ))}
                 </div>
               )}
@@ -245,23 +249,23 @@ const OrderHistory = () => {
                   onClick={() => showOrderDetails(order)}
                   className="bg-white rounded-2xl border-3 border-pink-200 shadow-sm overflow-hidden cursor-pointer transform transition hover:-translate-y-1 active:scale-95"
                 >
-                  <div className="bg-pink-50/50 p-3 border-b-2 border-pink-100 flex justify-between items-center">
-                    <div>
+                  <div className="bg-pink-50/50 p-3 border-b-2 border-pink-100">
+                    <div className="flex justify-between items-center mb-2">
                       <span className="font-bold text-gray-500 text-sm">{new Date(order.created_at).toLocaleString()}</span>
-                      {order.note && <p className="text-xs text-pink-500 mt-1 max-w-[13rem]">📝 "{order.note}"</p>}
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <div className={`flex items-center space-x-1 px-2 py-1 rounded-lg text-xs font-bold ${statusStyle.bg} ${statusStyle.color}`}>
-                        {statusStyle.icon}
-                        <span>{statusStyle.text}</span>
+                      <div className="flex items-center space-x-2">
+                        <div className={`flex items-center space-x-1 px-2 py-1 rounded-lg text-xs font-bold ${statusStyle.bg} ${statusStyle.color}`}>
+                          {statusStyle.icon}
+                          <span>{statusStyle.text}</span>
+                        </div>
+                        <button 
+                          onClick={(e) => { e.stopPropagation(); deleteOrder(order.id); }}
+                          className="text-red-300 hover:text-red-500 p-1"
+                        >
+                          <Trash2 size={16} />
+                        </button>
                       </div>
-                      <button 
-                        onClick={(e) => { e.stopPropagation(); deleteOrder(order.id); }}
-                        className="text-red-300 hover:text-red-500 p-1"
-                      >
-                        <Trash2 size={16} />
-                      </button>
                     </div>
+                    {order.note && <p className="text-xs text-pink-500 break-words">📝 "{order.note}"</p>}
                   </div>
                   
                   <div className="p-3">

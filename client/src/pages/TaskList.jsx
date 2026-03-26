@@ -227,7 +227,7 @@ const TaskList = () => {
                   {order.note && (
                     <div className="bg-white/80 p-3 rounded-xl border border-pink-200 mt-2 flex items-start space-x-2">
                       <MessageSquare size={16} className="text-pink-400 mt-0.5 shrink-0" />
-                      <p className="text-sm font-bold text-gray-700 italic">"{order.note}"</p>
+                      <p className="text-sm font-bold text-gray-700 italic break-words" style={{ wordBreak: 'break-all', overflowWrap: 'break-word' }}>"{order.note}"</p>
                     </div>
                   )}
                 </div>
@@ -238,60 +238,62 @@ const TaskList = () => {
                       {/* Main Item */}
                       <div 
                         onClick={() => toggleItemPurchased(item, order.id)}
-                        className={`flex items-center p-3 rounded-xl border-2 transition-all cursor-pointer active:scale-95 ${item.purchased ? 'bg-green-50 border-green-200 shadow-sm' : 'bg-white border-pink-100 shadow-sm hover:border-pink-300'}`}
+                        className={`p-3 rounded-xl border-2 transition-all cursor-pointer active:scale-95 ${item.purchased ? 'bg-green-50 border-green-200 shadow-sm' : 'bg-white border-pink-100 shadow-sm hover:border-pink-300'}`}
                       >
-                        <div className="mr-3 text-piggy-pink shrink-0">
-                          {item.purchased ? <CheckCircle size={24} fill="#22c55e" color="white" /> : <Circle size={24} color="#F472B6" />}
-                        </div>
-                        <div 
-                          className={`w-16 h-16 mr-3 rounded-xl flex items-center justify-center text-3xl shrink-0 cursor-pointer hover:scale-105 transition-transform overflow-hidden ${item.purchased ? 'bg-green-100 opacity-70' : 'bg-pink-100'}`}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            showPreview(item.image, item.name);
-                          }}
-                        >
-                          <ProductImage src={item.image} alt={item.name} />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className={`font-bold text-lg leading-tight ${item.purchased ? 'text-green-700' : 'text-gray-700'}`}>
+                        <div className="flex items-start justify-between mb-2">
+                          <p className={`font-bold text-lg ${item.purchased ? 'text-green-700' : 'text-gray-700'}`}>
                             {item.name}
                           </p>
-                          <div className="flex items-center space-x-2 mt-1 flex-wrap gap-y-1">
-                            <span className="text-xs text-gray-400 bg-gray-100 px-1.5 rounded">{item.category_name} - {item.sub_category}</span>
+                          <span className="text-xs text-gray-400 bg-gray-100 px-1.5 rounded">{item.category_name} - {item.sub_category}</span>
+                        </div>
+                        <div className="flex items-center space-x-3">
+                          <div className="text-piggy-pink shrink-0">
+                            {item.purchased ? <CheckCircle size={24} fill="#22c55e" color="white" /> : <Circle size={24} color="#F472B6" />}
+                          </div>
+                          <div 
+                            className={`w-16 h-16 rounded-xl flex items-center justify-center text-3xl shrink-0 cursor-pointer hover:scale-105 transition-transform overflow-hidden ${item.purchased ? 'bg-green-100 opacity-70' : 'bg-pink-100'}`}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              showPreview(item.image, item.name);
+                            }}
+                          >
+                            <ProductImage src={item.image} alt={item.name} />
+                          </div>
+                          <div className="flex-1">
                             <span className="text-sm font-bold text-piggy-pink-dark">¥{item.price}</span>
                           </div>
-                          {item.remark && (
-                            <div className="relative mt-1">
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  e.preventDefault();
-                                  setShowRemarkTooltip(showRemarkTooltip === `main-${item.id}` ? null : `main-${item.id}`);
-                                }}
-                                className="text-xs text-gray-500 bg-yellow-50 px-1.5 py-0.5 rounded border border-yellow-100 text-left w-[80%]"
-                              >
-                                📝 {item.remark.length > 15 ? item.remark.slice(0, 15) + '...' : item.remark}
-                              </button>
-                              {showRemarkTooltip === `main-${item.id}` && (
-                                <>
-                                  <div
-                                    className="fixed inset-0 z-30"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      setShowRemarkTooltip(null);
-                                    }}
-                                  />
-                                  <div className="absolute left-0 top-full mt-1 z-40 bg-white rounded-lg shadow-xl border-2 border-yellow-200 p-3 min-w-[180px] max-w-[240px] max-h-[100px] overflow-y-auto">
-                                    <p className="text-sm text-gray-700">{item.remark}</p>
-                                  </div>
-                                </>
-                              )}
-                            </div>
-                          )}
+                          <div className="font-black text-lg bg-pink-50 text-piggy-pink-dark px-2 rounded border border-pink-100">
+                            x{item.quantity}
+                          </div>
                         </div>
-                        <div className="font-black text-lg bg-pink-50 text-piggy-pink-dark px-2 rounded border border-pink-100">
-                          x{item.quantity}
-                        </div>
+                        {item.remark && (
+                          <div className="relative mt-2">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                e.preventDefault();
+                                setShowRemarkTooltip(showRemarkTooltip === `main-${item.id}` ? null : `main-${item.id}`);
+                              }}
+                              className="text-xs text-gray-500 bg-yellow-50 px-1.5 py-0.5 rounded border border-yellow-100 text-left w-[80%]"
+                            >
+                              📝 {item.remark.length > 15 ? item.remark.slice(0, 15) + '...' : item.remark}
+                            </button>
+                            {showRemarkTooltip === `main-${item.id}` && (
+                              <>
+                                <div
+                                  className="fixed inset-0 z-30"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setShowRemarkTooltip(null);
+                                  }}
+                                />
+                                <div className="absolute left-0 top-full mt-1 z-40 bg-white rounded-lg shadow-xl border-2 border-yellow-200 p-3 min-w-[180px] max-w-[240px] max-h-[100px] overflow-y-auto">
+                                  <p className="text-sm text-gray-700">{item.remark}</p>
+                                </div>
+                              </>
+                            )}
+                          </div>
+                        )}
                       </div>
 
                       {/* Backup Items */}
@@ -302,64 +304,66 @@ const TaskList = () => {
                             <div 
                               key={backup.id}
                               onClick={() => toggleItemPurchased(backup, order.id)}
-                              className={`flex items-center p-2 rounded-xl border-2 transition-all cursor-pointer active:scale-95 ${backup.purchased ? 'bg-green-50 border-green-200' : 'bg-purple-50 border-purple-100'}`}
+                              className={`p-2 rounded-xl border-2 transition-all cursor-pointer active:scale-95 ${backup.purchased ? 'bg-green-50 border-green-200' : 'bg-purple-50 border-purple-100'}`}
                             >
-                              <div className="mr-2 shrink-0">
-                                {backup.purchased ? <CheckCircle size={20} fill="#22c55e" color="white" /> : <Circle size={20} color="#a855f7" />}
-                              </div>
-                              <div 
-                                className="text-xl mr-2 cursor-pointer hover:scale-110 transition-transform shrink-0 w-8 h-8 flex items-center justify-center overflow-hidden"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  showPreview(backup.image, backup.name);
-                                }}
-                              >
-                                <ProductImage src={backup.image} alt={backup.name} />
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <p className={`font-bold text-sm leading-tight ${backup.purchased ? 'text-green-700' : 'text-purple-700'}`}>
+                              <div className="flex items-start justify-between mb-2">
+                                <p className={`font-bold text-sm ${backup.purchased ? 'text-green-700' : 'text-purple-700'}`}>
                                   {backup.name}
                                 </p>
-                                <div className="flex items-center space-x-1 mt-0.5 flex-wrap gap-y-1">
-                                  {(backup.category_name || backup.sub_category) && (
-                                    <span className="text-[9px] text-gray-400 bg-gray-100 px-1 rounded">
-                                      {backup.category_name || ''}{backup.category_name && backup.sub_category && backup.sub_category !== '全部' ? ' - ' : ''}{backup.sub_category && backup.sub_category !== '全部' ? backup.sub_category : ''}
-                                    </span>
-                                  )}
-                                  <span className="text-xs font-bold text-purple-500">¥{backup.price}</span>
-                                </div>
-                                {backup.remark && (
-                                  <div className="relative mt-1">
-                                    <button
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        e.preventDefault();
-                                        setShowRemarkTooltip(showRemarkTooltip === `backup-${backup.id}` ? null : `backup-${backup.id}`);
-                                      }}
-                                      className="text-xs text-gray-500 bg-white px-1 py-0.5 rounded border border-gray-100 text-left w-[80%]"
-                                    >
-                                      📝 {backup.remark.length > 12 ? backup.remark.slice(0, 12) + '...' : backup.remark}
-                                    </button>
-                                    {showRemarkTooltip === `backup-${backup.id}` && (
-                                      <>
-                                        <div
-                                          className="fixed inset-0 z-30"
-                                          onClick={(e) => {
-                                            e.stopPropagation();
-                                            setShowRemarkTooltip(null);
-                                          }}
-                                        />
-                                        <div className="absolute left-0 top-full mt-1 z-40 bg-white rounded-lg shadow-xl border-2 border-purple-200 p-2 min-w-[160px] max-w-[200px] max-h-[80px] overflow-y-auto">
-                                          <p className="text-xs text-gray-700">{backup.remark}</p>
-                                        </div>
-                                      </>
-                                    )}
-                                  </div>
+                                {(backup.category_name || backup.sub_category) && (
+                                  <span className="text-[9px] text-gray-400 bg-gray-100 px-1 rounded">
+                                    {backup.category_name || ''}{backup.category_name && backup.sub_category && backup.sub_category !== '全部' ? ' - ' : ''}{backup.sub_category && backup.sub_category !== '全部' ? backup.sub_category : ''}
+                                  </span>
                                 )}
                               </div>
-                              <div className="font-bold text-sm bg-white text-purple-600 px-1.5 rounded border border-purple-200">
-                                x{backup.quantity}
+                              <div className="flex items-center space-x-2">
+                                <div className="shrink-0">
+                                  {backup.purchased ? <CheckCircle size={20} fill="#22c55e" color="white" /> : <Circle size={20} color="#a855f7" />}
+                                </div>
+                                <div 
+                                  className="text-xl cursor-pointer hover:scale-110 transition-transform shrink-0 w-8 h-8 flex items-center justify-center overflow-hidden"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    showPreview(backup.image, backup.name);
+                                  }}
+                                >
+                                  <ProductImage src={backup.image} alt={backup.name} />
+                                </div>
+                                <div className="flex-1">
+                                  <span className="text-xs font-bold text-purple-500">¥{backup.price}</span>
+                                </div>
+                                <div className="font-bold text-sm bg-white text-purple-600 px-1.5 rounded border border-purple-200">
+                                  x{backup.quantity}
+                                </div>
                               </div>
+                              {backup.remark && (
+                                <div className="relative mt-2">
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      e.preventDefault();
+                                      setShowRemarkTooltip(showRemarkTooltip === `backup-${backup.id}` ? null : `backup-${backup.id}`);
+                                    }}
+                                    className="text-xs text-gray-500 bg-white px-1 py-0.5 rounded border border-gray-100 text-left w-[80%]"
+                                  >
+                                    📝 {backup.remark.length > 12 ? backup.remark.slice(0, 12) + '...' : backup.remark}
+                                  </button>
+                                  {showRemarkTooltip === `backup-${backup.id}` && (
+                                    <>
+                                      <div
+                                        className="fixed inset-0 z-30"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          setShowRemarkTooltip(null);
+                                        }}
+                                      />
+                                      <div className="absolute left-0 top-full mt-1 z-40 bg-white rounded-lg shadow-xl border-2 border-purple-200 p-2 min-w-[160px] max-w-[200px] max-h-[80px] overflow-y-auto">
+                                        <p className="text-xs text-gray-700">{backup.remark}</p>
+                                      </div>
+                                    </>
+                                  )}
+                                </div>
+                              )}
                             </div>
                           ))}
                         </div>
