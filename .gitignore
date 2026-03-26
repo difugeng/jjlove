@@ -37,3 +37,6 @@ dist-ssr
 
 # Server logs
 server/logs/
+server/db/uploads/
+server/db/jjlove.db
+
