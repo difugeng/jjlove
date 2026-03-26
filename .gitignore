@@ -39,4 +39,3 @@ dist-ssr
 server/logs/
 server/db/uploads/
 server/db/jjlove.db
-
