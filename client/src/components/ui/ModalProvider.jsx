@@ -31,7 +31,7 @@ export const ModalProvider = ({ children }) => {
             <div
               className="bg-white rounded-[2rem] border-4 border-white shadow-2xl p-6 w-full max-w-sm relative z-10 transition-transform duration-300 transform scale-100"
             >
-              <div className="bg-piggy-bg absolute inset-0 -z-10 opacity-50" />
+              <div className="bg-piggy-bg absolute inset-0 -z-10 opacity-50 rounded-[2rem]" />
               
               <div className="flex justify-between items-center mb-3">
                 <h3 className="text-xl font-black text-piggy-pink-dark">
