@@ -3,9 +3,13 @@ import CustomSelect from './ui/CustomSelect';
 import { ImagePlus } from 'lucide-react';
 import ProductImage from './ui/ProductImage';
 import { useModal } from './ui/ModalProvider';
+import usePreventScroll from './ui/usePreventScroll';
 
 const ProductModal = ({ isOpen, onClose, onSubmit, initialData = null, categories = [] }) => {
   const { showModal } = useModal();
+  
+  // 防止背景滚动
+  usePreventScroll(isOpen);
   
   // Default to empty strings for "请选择"
   const defaultCategoryId = '';

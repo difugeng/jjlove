@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
+import usePreventScroll from './ui/usePreventScroll';
 
 const CategoryModal = ({ isOpen, onClose, onSubmit }) => {
   const [name, setName] = useState('');
   const [subStr, setSubStr] = useState('');
+  
+  // 防止背景滚动
+  usePreventScroll(isOpen);
 
   if (!isOpen) return null;
 

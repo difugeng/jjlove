@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
 
@@ -9,6 +9,19 @@ export const useImagePreview = () => useContext(ImagePreviewContext);
 
 export const ImagePreviewProvider = ({ children }) => {
   const [previewData, setPreviewData] = useState(null); // { image: string, title: string }
+
+  // 处理背景滚动
+  useEffect(() => {
+    if (previewData) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [previewData]);
 
   const showPreview = (image, title = '') => {
     // 处理相对路径的图片，与 ProductImage 组件保持一致

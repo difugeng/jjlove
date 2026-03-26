@@ -1,10 +1,23 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { AnimatePresence } from 'framer-motion';
 
 const ModalContext = createContext();
 
 export const ModalProvider = ({ children }) => {
   const [modals, setModals] = useState([]);
+
+  // 处理背景滚动
+  useEffect(() => {
+    if (modals.length > 0) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [modals.length]);
 
   const showModal = useCallback((options) => {
     const id = Date.now().toString();
